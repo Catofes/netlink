@@ -18,6 +18,7 @@ type Neigh struct {
 	Vlan         int
 	VNI          int
 	MasterIndex  int
+        ViaIfIndex   int
 }
 
 // String returns $ip/$hwaddr $label

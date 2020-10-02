@@ -181,6 +181,11 @@ func neighHandle(neigh *Neigh, req *nl.NetlinkRequest) error {
 		masterData := nl.NewRtAttr(NDA_MASTER, nl.Uint32Attr(uint32(neigh.MasterIndex)))
 		req.AddData(masterData)
 	}
+        
+	if neigh.ViaIfIndex != 0 {                                                     
+                viaData := nl.NewRtAttr(NDA_IFINDEX, nl.Uint32Attr(uint32(neigh.ViaIfIndex)))
+                req.AddData(viaData)                                                         
+        }
 
 	_, err := req.Execute(unix.NETLINK_ROUTE, 0)
 	return err
@@ -299,7 +304,9 @@ func NeighDeserialize(m []byte) (*Neigh, error) {
 			neigh.VNI = int(native.Uint32(attr.Value[0:4]))
 		case NDA_MASTER:
 			neigh.MasterIndex = int(native.Uint32(attr.Value[0:4]))
-		}
+		case NDA_IFINDEX:                                                               
+                        neigh.ViaIfIndex = int(native.Uint32(attr.Value[0:4]))
+                }
 	}
 
 	return &neigh, nil
